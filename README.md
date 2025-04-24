@@ -1,133 +1,33 @@
-📬 API Usage
-Endpoint
-bash
-Copy
-Edit
-POST /api/mail/generate
-Request Body
-json
-Copy
-Edit
-{
-  "emailContent": "Hi, can we move our meeting to tomorrow afternoon?",
-  "tone": "formal"
-}
-Sample Response
-json
-Copy
-Edit
-"Certainly, we can reschedule the meeting to tomorrow afternoon. Please let me know a suitable time."
-🔄 How It Works
-Request: A client sends a JSON request to the /api/mail/generate endpoint containing:
+## Code Description
 
-The original email message (emailContent)
+This project is organized into three main parts: the backend service, the frontend React application, and the extension version. Below is a breakdown of each part:
 
-The desired tone (tone) — e.g., formal, casual, etc.
+### 1. **email-writer** (Java Spring Boot Backend)
 
-Processing:
+The backend service is built with **Java Spring Boot** and provides the API endpoint for generating AI-based email replies. The backend is responsible for processing the requests and communicating with the Gemini API to generate email responses based on the provided content and tone.
 
-EmailController handles the request and delegates it to the EmailGeneratorService.
+- **`EmailController.java`**: This file exposes the API endpoint `/api/mail/generate` that accepts POST requests with the email content and tone. It delegates the actual generation process to the service layer.
+- **`EmailBody.java`**: This class models the request body, containing two fields: `emailContent` (the original email message) and `tone` (the desired tone of the generated reply).
+- **`EmailGeneratorService.java`**: This service constructs a prompt using the provided email content and tone, and then sends the request to the Gemini API. The response is extracted and returned to the client.
+- **`application.properties`**: This file contains configuration properties like the API key and the URI for the Gemini API.
 
-The service dynamically constructs a prompt including:
+### 2. **email-writer-react** (Frontend - React Application)
 
-The original email content
+The frontend is a React-based web application that allows users to input email content and select the desired tone to generate email replies. It communicates with the backend to send requests and display the generated replies.
 
-The desired tone
+- **`components/`**: This directory contains React components that handle the user interface for inputting email content and selecting tone, as well as displaying the generated email responses.
+- **`public/`**: Contains static files like `index.html` and images used by the React app.
+- **`package.json`**: The file contains all dependencies for the frontend React application and scripts to build, run, and test the frontend application.
 
-Instructions to return only the reply content (no subject line, headers, or additional metadata).
+### 3. **email-writer-ext** (Extension Version)
 
-Response:
+The extension version provides integration with email platforms, allowing users to generate AI replies directly in their email clients, such as Gmail or Outlook.
 
-The constructed prompt is sent to the Gemini API via a non-blocking WebClient request.
+- **`src/`**: Contains the core logic and background scripts for the extension. It communicates with the backend service to generate replies based on the email content and selected tone.
+- **`manifest.json`**: This file defines the metadata and settings for the extension, such as permissions, background scripts, and browser-specific configurations.
+- **`background.js`**: Contains the logic that handles the background tasks for the extension, including communicating with the backend API to fetch generated replies.
 
-The API responds with a generated reply, which the service extracts and returns to the client in a clean format.
+---
 
-💡 Example Prompt Sent to Gemini
-text
-Copy
-Edit
-You are a professional email assistant. Generate only the email content as a reply to the message below. 
-Do not include a subject line, headers, or any explanations. Only output the reply content.
+These three parts work together to allow users to easily generate and send AI-powered email replies based on the tone and content they specify. You can interact with the backend via the API, use the React frontend for a user-friendly interface, or integrate the extension directly into your email client for seamless email generation.
 
-Use a formal tone.
-
-Original message:
-"Hi, can we move our meeting to tomorrow afternoon?"
-
-Your reply:
-📁 Project Structure
-graphql
-Copy
-Edit
-src/
-├── controller/
-│   └── EmailController.java         # Exposes the /generate endpoint
-├── model/
-│   └── EmailBody.java               # Holds emailContent and tone
-├── service/
-│   └── EmailGeneratorService.java   # Builds the prompt, calls Gemini API
-└── resources/
-    └── application.properties       # Config for API keys, URI
-🧪 Testing the API
-Using cURL
-bash
-Copy
-Edit
-curl -X POST http://localhost:8080/api/mail/generate \
-     -H "Content-Type: application/json" \
-     -d '{
-           "emailContent": "Can you share the project updates today?",
-           "tone": "professional"
-         }'
-Using Postman
-Method: POST
-
-URL: http://localhost:8080/api/mail/generate
-
-Headers: Content-Type: application/json
-
-Body:
-
-json
-Copy
-Edit
-{
-  "emailContent": "Please send me the final draft by EOD.",
-  "tone": "formal"
-}
-🧰 Troubleshooting & Logs
-API Key: Ensure your Gemini API key is valid and active.
-
-Response Parsing Issues: If the response isn't returned as expected, check the logs for the following error message:
-Failed to extract response from Gemini API.
-
-Logging: SLF4J is used for logging and error tracking in the application.
-
-📌 Notes
-Response format: The response contains only the reply content (no subject line, headers, or additional explanations).
-
-Prompt Formatting: The system ensures that the Gemini API returns a clean, usable reply based on the provided content and tone.
-
-Future Enhancements: You can easily extend this project to include:
-
-Multilingual support
-
-Emotion/tone switching
-
-Integration with popular email services (Gmail API, Outlook, etc.)
-
-🤝 Contributing
-Contributions are welcome! Feel free to fork the repository, create a branch, and submit a pull request.
-
-For bugs, issues, or feature requests, please open an issue.
-
-Key Elements in this README:
-Headings: Clearly defined sections using ## for major sections.
-
-Code Blocks: Using triple backticks for code sections (e.g., configuration properties, cURL commands).
-
-Lists: Bullet points for features, dependencies, and configuration instructions.
-
-Links: Used Markdown links for Google AI Studio (API setup).
-
-Formatting: Code, commands, and file paths are highlighted with proper Markdown syntax.
